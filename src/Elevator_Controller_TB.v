@@ -10,13 +10,23 @@
 module Elevator_Controller_TB;
 
 reg [4:0] fb;
+reg fin;
+wire fout, fup, fdown;
 reg [4:0] sb;
+reg sin;
+wire sout, sup, sdown;
+
+wire [2:0] ffloor;
+wire [2:0] sfloor;
+
 reg [4:0] buttons;
 reg clk;
 reg [4:0] req_floor;
 reg reset;
 
-Elevator_Controller uut(fb, sb, buttons, clk, reset);
+Elevator_Controller uut(fb, fin, fout, ffloor, fup, fdown, 
+                        sb, sin, sout, sfloor, sup, sdown, 
+                        buttons, clk, reset);
 
 initial begin
     clk = 0;
