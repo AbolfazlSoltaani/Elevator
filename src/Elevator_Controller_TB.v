@@ -13,6 +13,8 @@ reg [4:0] fb;
 reg [4:0] sb;
 reg [4:0] buttons;
 reg clk;
+reg [4:0] req_floor;
+reg reset;
 
 Elevator_Controller uut(fb, sb, buttons, clk, reset);
 
@@ -24,19 +26,24 @@ end
 initial begin
     $dumpfile("Elevator.vcd");
     $dumpvars(0, Elevator_Controller_TB);
+    fb = 5'b00000;
+    sb = 5'b00000;
+    buttons = 5'b00000;
 
-    clk = 0;
-
+    reset = 1;
     #10;
-    clk = 1;
     reset = 0;
-    buttons = 6;
-
+    buttons = 5'b10000;
     #10;
-    clk = 0;
+    buttons = 5'b00000;
+    #100;
+    fb = 5'b00100;
     #10;
-    clk = 1;
+    fb = 5'b00000;
+    #100;
+    buttons = 5'b10001;
     #10;
+    buttons = 5'b00000;
+    
 end
-
 endmodule

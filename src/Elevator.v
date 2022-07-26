@@ -1,51 +1,53 @@
 `timescale 1ns / 1ns
+//////////////////////////////////////////////////////////////////////////////////
+// Company: HajarCO
+// Engineer: Ali Rahmizad & Abolfazl Soltani 
+// Module Name: Elevator_Controller
+//////////////////////////////////////////////////////////////////////////////////
 
-module Elevator(clk,reset,req_floor,stop,door,Up,Down,y);
 
-input clk,reset;
+module Elevator(input [4:0] buttons, input clk, input reset, output reg [2:0] current_floor);
 
-input [4:0] req_floor;
-output reg[1:0] door;
-output reg[1:0] Up;
-output reg[1:0] Down;
-output reg[1:0] stop;
+// reg [2:0] next_floor;
+reg [2:0] previus_floor;
+reg door; // 0 is closed and 1 is open
+reg [4:0] reqs;
+reg [3:0] cap;
+integer i;
 
-output [6:0] y;
-reg [6:0] cf ;
+initial begin 
+    current_floor = 3'b000;
+    previus_floor = 3'b000;
+    reqs = 5'b00000;
+    cap = 6;
+    door = 0;
+end
 
-always @ (posedge clk) begin
-    if(reset) begin
-        cf=6'd0;
-        stop=6'd1;
-        door = 1'd1;
-        Up=1'd0;
-        Down=1'd0;
-    end 
+always @(posedge clk) begin
+    if (reqs == 5'b00000) begin
+        door = 0;
+    end
+    else if (door == 1) begin
+        door = 0;
+    end
+    else if (reqs[current_floor] == 1) begin
+        door = 1;
+        reqs[current_floor] = 0;
+    end
+    else if (current_floor == 4 || (current_floor > 0 && previus_floor == current_floor + 1)) begin
+        previus_floor = current_floor;
+        current_floor = current_floor - 1;
+
+    end
     else begin
-        if(req_floor < cf ) begin
-            cf=cf-1;
-            door=1'd0;
-            stop=6'd0;
-            Up=1'd0;
-            Down=1'd1;
-        end 
-        else if (req_floor > cf) begin
-            cf = cf+1;
-            door=1'd0;
-            stop=6'd0;
-            Up=1'd1;
-            Down=1'd0;
-        end
-        else if(req_floor == cf ) begin
-            cf = req_floor;
-            door=1'd1;
-            stop=6'd1;
-            Up=1'd0;
-            Down=1'd0;
-        end
+        previus_floor = current_floor;
+        current_floor = current_floor + 1;
     end
 end
 
-assign y = cf;
+
+always @(buttons) begin
+    reqs = reqs | buttons;
+end
 
 endmodule
