@@ -28,14 +28,18 @@ always @(negedge door) begin
         next_floor <= current_floor;
     else
         next_floor <= destination > current_floor ? current_floor + 1 : current_floor - 1;
-end
-
-always @(negedge door) begin
     if (current_floor == 4 || previus_floor == current_floor + 1)
         destination <= current_floor - 1;
     else
         destination <= current_floor + 1;
 end
+
+// always @(negedge door) begin
+//     if (current_floor == 4 || previus_floor == current_floor + 1)
+//         destination <= current_floor - 1;
+//     else
+//         destination <= current_floor + 1;
+// end
 
 always @(buttons) begin
     reqs <= reqs | buttons;
