@@ -1,32 +1,51 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: HajarCO
-// Engineer: Ali Rahmizad & Abolfazl Soltani 
-// Module Name: Elevator_Controller
-//////////////////////////////////////////////////////////////////////////////////
+`timescale 1ns / 1ns
 
+module Elevator(clk,reset,req_floor,stop,door,Up,Down,y);
 
-module Elevator(input [4:0] request_floors, );
+input clk,reset;
 
-integer current_floor = 0
-reg [4:0] ins;
-reg [4:0] outs;
+input [4:0] req_floor;
+output reg[1:0] door;
+output reg[1:0] Up;
+output reg[1:0] Down;
+output reg[1:0] stop;
 
-always @(request_floors) begin
-    ins = ins | request_floors
+output [6:0] y;
+reg [6:0] cf ;
+
+always @ (posedge clk) begin
+    if(reset) begin
+        cf=6'd0;
+        stop=6'd1;
+        door = 1'd1;
+        Up=1'd0;
+        Down=1'd0;
+    end 
+    else begin
+        if(req_floor < cf ) begin
+            cf=cf-1;
+            door=1'd0;
+            stop=6'd0;
+            Up=1'd0;
+            Down=1'd1;
+        end 
+        else if (req_floor > cf) begin
+            cf = cf+1;
+            door=1'd0;
+            stop=6'd0;
+            Up=1'd1;
+            Down=1'd0;
+        end
+        else if(req_floor == cf ) begin
+            cf = req_floor;
+            door=1'd1;
+            stop=6'd1;
+            Up=1'd0;
+            Down=1'd0;
+        end
+    end
 end
 
-always @(current_floor) {
-    if (outs[current_floor]) {
-        outs[current_floor] = 0
-        capacity = capacity - 1
-        current_floor <- next_floor()
-    }
-    if (ins[current_floor])
-        ins[current_floor] = 0
-}
+assign y = cf;
 
 endmodule
-
-// request_floors = 01000
-// ins = 01000
